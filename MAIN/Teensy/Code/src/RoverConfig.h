@@ -131,3 +131,7 @@ constexpr float MOCK_PRESSURE_MIN_PA = 98000.0f;
 constexpr float MOCK_PRESSURE_MAX_PA = 103000.0f;
 constexpr float GIMBAL_SUPPLY_V = 12.0f;
 constexpr float VERTICAL_SPEED_SCALE = 32767.0f;
+constexpr uint16_t PCA9685_PWM_FREQ_HZ = 1000;
+constexpr uint8_t BME280_I2C_ADDR = 0x76;
+constexpr uint8_t GIMBAL_POLE_PAIRS = 7;
+constexpr uint32_t VERTICAL_CAN_ID = 0x100;
