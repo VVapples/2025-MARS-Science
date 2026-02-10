@@ -21,12 +21,16 @@ namespace {
 Adafruit_PWMServoDriver g_pcaE1(PCA9685_E1_ADDR);
 Adafruit_PWMServoDriver g_pcaE2(PCA9685_E2_ADDR);
 
-FlexCanBus g_canBus;
-
 DrillMotor g_drill(&g_pcaE1, MOCK_DRILL);
-PumpMotor g_pump(&g_pcaE1, MOCK_PUMP);
-GimbalMotor g_gimbal(PIN_M_A1_IN1, PIN_M_A1_IN2, PIN_M_A1_IN3, GIMBAL_POLE_PAIRS, MOCK_GIMBAL);
-VerticalMotor g_vertical(&g_canBus, VERTICAL_CAN_ID, MOCK_VERTICAL);
+PumpMotor g_pump(&g_pcaE2, MOCK_PUMP);
+GimbalMotor g_gimbal(&g_pcaE1, CH_E1_M_S8_SIG, MOCK_GIMBAL);
+VerticalMotor g_vertical(PIN_M_A1_IN1,
+                          PIN_M_A1_IN2,
+                          PIN_M_A1_IN3,
+                          VERTICAL_POLE_PAIRS,
+                          &g_pcaE1,
+                          CH_E1_M_A1_EN,
+                          MOCK_VERTICAL);
 
 SoilSensor g_soil(PIN_S_1_SIGNAL, MOCK_SENSORS);
 BME280_Wrapper g_bme(&Wire, BME280_I2C_ADDR, MOCK_SENSORS);
