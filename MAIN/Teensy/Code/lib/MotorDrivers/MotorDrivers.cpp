@@ -1,5 +1,7 @@
 #include "MotorDrivers.h"
 
+#include "Thread_Logger.h"
+
 // ----------------------------
 // MotorPWM
 // ----------------------------
@@ -18,6 +20,7 @@ MotorPWM::MotorPWM(int enPin, int phPin, bool isMock, bool usePhaseEnable)
 void MotorPWM::begin() {
   if (isMock_) {
     Serial.println("[MOCK] MotorPWM begin");
+    loggerLog(LogLevel::DATA, LogTag::MOTOR, "MotorPWM begin (mock)");
     return;
   }
 
@@ -25,6 +28,7 @@ void MotorPWM::begin() {
   if (dirOrPhPin_ >= 0) {
     pinMode(dirOrPhPin_, OUTPUT);
   }
+  loggerLog(LogLevel::DATA, LogTag::MOTOR, "MotorPWM begin");
 }
 
 void MotorPWM::setSpeed(float normalized) {
@@ -34,6 +38,7 @@ void MotorPWM::setSpeed(float normalized) {
   if (isMock_) {
     Serial.print("[MOCK] MotorPWM setSpeed: ");
     Serial.println(normalized, 3);
+    loggerLogf(LogLevel::DATA, LogTag::MOTOR, "MotorPWM setSpeed %.3f (mock)", normalized);
     return;
   }
 
@@ -49,14 +54,17 @@ void MotorPWM::setSpeed(float normalized) {
   } else {
     analogWrite(pwmPin_, duty);
   }
+  loggerLogf(LogLevel::DATA, LogTag::MOTOR, "MotorPWM setSpeed %.3f", normalized);
 }
 
 void MotorPWM::stop() {
   if (isMock_) {
     Serial.println("[MOCK] MotorPWM stop");
+    loggerLog(LogLevel::DATA, LogTag::MOTOR, "MotorPWM stop (mock)");
     return;
   }
   analogWrite(pwmPin_, 0);
+  loggerLog(LogLevel::DATA, LogTag::MOTOR, "MotorPWM stop");
 }
 
 // ----------------------------
@@ -70,11 +78,13 @@ MotorCAN::MotorCAN(FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> &bus,
 void MotorCAN::begin() {
   if (isMock_) {
     Serial.println("[MOCK] MotorCAN begin");
+    loggerLog(LogLevel::DATA, LogTag::CAN, "MotorCAN begin (mock)");
     return;
   }
 
   bus_.begin();
   bus_.setBaudRate(1000000);
+  loggerLog(LogLevel::DATA, LogTag::CAN, "MotorCAN begin");
 }
 
 void MotorCAN::setSpeed(float normalized) {
@@ -84,6 +94,7 @@ void MotorCAN::setSpeed(float normalized) {
   if (isMock_) {
     Serial.print("[MOCK] MotorCAN setSpeed: ");
     Serial.println(normalized, 3);
+    loggerLogf(LogLevel::DATA, LogTag::CAN, "MotorCAN setSpeed %.3f (mock)", normalized);
     return;
   }
 
@@ -103,6 +114,7 @@ void MotorCAN::setSpeed(float normalized) {
   msg.buf[7] = 0;
 
   bus_.write(msg);
+  loggerLogf(LogLevel::DATA, LogTag::CAN, "MotorCAN setSpeed %.3f", normalized);
 }
 
 void MotorCAN::stop() {
@@ -130,6 +142,7 @@ MotorSimpleFOC::MotorSimpleFOC(int polePairs,
 void MotorSimpleFOC::begin() {
   if (isMock_) {
     Serial.println("[MOCK] MotorSimpleFOC begin");
+    loggerLog(LogLevel::DATA, LogTag::MOTOR, "MotorSimpleFOC begin (mock)");
     return;
   }
 
@@ -138,6 +151,7 @@ void MotorSimpleFOC::begin() {
   motor_.linkDriver(&driver_);
   motor_.controller = MotionControlType::velocity;
   motor_.init();
+  loggerLog(LogLevel::DATA, LogTag::MOTOR, "MotorSimpleFOC begin");
 }
 
 void MotorSimpleFOC::setSpeed(float normalized) {
@@ -147,16 +161,20 @@ void MotorSimpleFOC::setSpeed(float normalized) {
   if (isMock_) {
     Serial.print("[MOCK] MotorSimpleFOC setSpeed: ");
     Serial.println(normalized, 3);
+    loggerLogf(LogLevel::DATA, LogTag::MOTOR, "MotorSimpleFOC setSpeed %.3f (mock)", normalized);
     return;
   }
 
   motor_.move(normalized);
+  loggerLogf(LogLevel::DATA, LogTag::MOTOR, "MotorSimpleFOC setSpeed %.3f", normalized);
 }
 
 void MotorSimpleFOC::stop() {
   if (isMock_) {
     Serial.println("[MOCK] MotorSimpleFOC stop");
+    loggerLog(LogLevel::DATA, LogTag::MOTOR, "MotorSimpleFOC stop (mock)");
     return;
   }
   motor_.move(0.0f);
+  loggerLog(LogLevel::DATA, LogTag::MOTOR, "MotorSimpleFOC stop");
 }
