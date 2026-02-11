@@ -73,7 +73,7 @@ void loggerLog(LogLevel level, LogTag tag, const char *message) {
     return;
   }
 
-  Threads::Mutex::ScopedLock lock(g_logMutex);
+  g_logMutex.lock();
   g_logFile.print(millis());
   g_logFile.print(',');
   g_logFile.print(levelToString(level));
@@ -83,6 +83,7 @@ void loggerLog(LogLevel level, LogTag tag, const char *message) {
   g_logFile.println(message ? message : "");
 
   g_pendingLines++;
+  g_logMutex.unlock();
 }
 
 void loggerLogf(LogLevel level, LogTag tag, const char *fmt, ...) {
@@ -99,10 +100,11 @@ void loggerFlush() {
     return;
   }
 
-  Threads::Mutex::ScopedLock lock(g_logMutex);
+  g_logMutex.lock();
   g_logFile.flush();
   g_pendingLines = 0;
   g_lastFlushMs = millis();
+  g_logMutex.unlock();
 }
 
 void loggerThread() {
