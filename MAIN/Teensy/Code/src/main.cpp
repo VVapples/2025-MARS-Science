@@ -1,3 +1,5 @@
+#ifndef UNIT_TEST
+
 #include <Arduino.h>
 #include <TeensyThreads.h>
 
@@ -127,3 +129,5 @@ void loop() {
   RoverApp::processControlTicks();
   threads.yield();
 }
+
+#endif  // UNIT_TEST

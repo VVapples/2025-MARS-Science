@@ -292,12 +292,16 @@ CommandSequencer::ParseResult CommandSequencer::parseTokensToActions(const Strin
         // Break on next command starters
         if (t == "STOP" || t == "SENS" || t == "HB" ||
             (t.length() >= 2 && t.charAt(0) == 'G' && isDigit(t.charAt(1)))) {
+          // Rewind to token start so outer parser can process this token.
+          scan = s0;
           break;
         }
 
         // Break if pause token appears (belongs to outer loop)
         uint32_t tmpPause = 0;
         if (parseUnsignedAfterPrefix(t, 'P', tmpPause) && t.length() > 1 && hasDuration) {
+          // Rewind to token start so outer parser can process pause token.
+          scan = s0;
           break;
         }
 
